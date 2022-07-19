@@ -1,0 +1,21 @@
+version: "3.9"
+
+services:
+  demo:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: deploy-python-demo
+    image: deploy-python-demo:latest
+    restart: unless-stopped
+    command: sh -c "python3 manage.py runserver 0.0.0.0:8000"
+  nginx:
+    image: nginx:mainline
+    ports:
+      - "8081:81"
+    volumes:
+      - ./deploy-python.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - demo
+    container_name: deploy-python-nginx
+    restart: unless-stopped
